@@ -16,16 +16,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-  private DifferentialDrive m_myRobot;
+  private DifferentialDrive myRobot;
   private Joystick stick;
-  private PWMVictorSPX intake_motor;
+  private PWMVictorSPX intakeMotor;
   private JoystickButton button1;
 
   @Override
   public void robotInit() {
-   m_myRobot = new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
+   myRobot = new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
    stick= new Joystick(0);
-   intake_motor = new PWMVictorSPX(4);
+   intakeMotor = new PWMVictorSPX(4);
    button1 = new JoystickButton(stick, 1);
    
 
@@ -33,15 +33,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
+    //Hız
     double hiz = stick.getThrottle();
-    if (stick.getThrottle()>0) {hiz = 0;}
+    if (stick.getThrottle() > 0) {
+      hiz = 0;
+    }
 
-    m_myRobot.arcadeDrive( hiz* stick.getY(), -1*hiz*stick.getX());
-    button1.whenPressed(intake_motor.set(1));
-    button1.whenReleased(intake_motor.set(0));
+    myRobot.arcadeDrive( hiz* stick.getY(), -1*hiz*stick.getX());
+    
+    //IntakeMotor 
+    if (hiz * stick.getY() < 0) {
+      intakeMotor.set(-1);
+    }
+    else if (button1.get()) {
+      intakeMotor.set(1);
+    }
+    else {
+      intakeMotor.set(0);
+    }
   
   }
  }
-
-
